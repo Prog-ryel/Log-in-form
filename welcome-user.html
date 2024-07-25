@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome User</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+              background-image: url('/login/rr.jpg'); /* Replace with your image URL */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .header {
+            width: 100%;
+            background-color: #7800FF;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.5rem;
+           
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .container {
+           background: rgba(250, 250, 250, 0.6);
+            margin-top: 80px;
+          
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 90%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .welcome-message {
+            font-size: 1.2rem;
+            color: #333;
+        }
+
+        .navigation {
+            margin-top: 20px;
+        }
+
+        .navigation a {
+            color: #7800FF;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 0 15px;
+        }
+
+        .navigation a:hover {
+            color: deepskyblue;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 95%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .form-group button {
+            background-color: #7800FF;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+
+        .form-group button:hover {
+            background-color: #611FE8;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                margin: 5px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+                margin: 0;
+            }
+
+            h1 {
+                font-size: 1.2rem;
+            }
+        }
+      .form-group input, .form-group textarea {
+         outline: 1px solid blue;
+        }
+       .form-group textarea:hover {
+         outline: 2px solid #833ED0;
+         filter: drop-shadow(1px 1px 15px  #872FEB);
+        }
+       .form-group input:hover {
+        outline: 2px solid #833ED0;
+        filter: drop-shadow(1px 1px 15px  #872FEB);
+       }
+    </style>
+</head>
+<body>
+    <div class="header">
+        Welcome to Your Dashboard
+    </div>
+    <div class="container">
+        <h1>Welcome, <span id="username"></span>!</h1>
+        <p class="welcome-message">You have successfully logged in. Here you can manage your account and update your details.</p>
+        
+        <form id="updateForm">
+            <div class="form-group">
+                <label for="address">Address:</label>
+                <input type="text" id="address" name="address">
+            </div>
+            <div class="form-group">
+                <label for="contactNumber">Contact Number:</label>
+                <input type="tel" id="contactNumber" name="contactNumber">
+            </div>
+            <div class="form-group">
+                <button type="submit">Update Details</button>
+            </div>
+        </form>
+
+        <!-- Message Form -->
+        <h2>Send a Message</h2>
+        <form id="messageForm">
+            <div class="form-group">
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" rows="4"></textarea>
+            </div>
+            <div class="form-group">
+                <button type="submit">Send Message</button>
+            </div>
+        </form>
+
+        <div class="navigation">
+            <a href="profile.html">View Profile</a>
+            <a href="login.html">Logout</a>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+            if (!loggedInUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+            document.getElementById('username').textContent = loggedInUser.username;
+            document.getElementById('address').value = loggedInUser.address || '';
+            document.getElementById('contactNumber').value = loggedInUser.contactNumber || '';
+        });
+
+        document.getElementById('updateForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const address = document.getElementById('address').value;
+            const contactNumber = document.getElementById('contactNumber').value;
+
+            const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+            if (loggedInUser) {
+                loggedInUser.address = address;
+                loggedInUser.contactNumber = contactNumber;
+                localStorage.setItem('loggedInUser', JSON.stringify(loggedInUser));
+
+                let users = JSON.parse(localStorage.getItem('users')) || [];
+                let user = users.find(user => user.username === loggedInUser.username);
+                if (user) {
+                    user.address = address;
+                    user.contactNumber = contactNumber;
+                    localStorage.setItem('users', JSON.stringify(users));
+                }
+
+                alert('Details updated successfully!');
+            }
+        });
+
+        document.getElementById('messageForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const message = document.getElementById('message').value;
+            const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+
+            if (loggedInUser) {
+                const messages = JSON.parse(localStorage.getItem('messages')) || [];
+                messages.push({
+                    username: loggedInUser.username,
+                    message: message,
+                    timestamp: new Date().toISOString()
+                });
+                localStorage.setItem('messages', JSON.stringify(messages));
+                alert('Message sent successfully!');
+                document.getElementById('message').value = ''; // Clear the textarea
+            }
+        });
+    </script>
+</body>
+</html>
