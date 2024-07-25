@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <style>
+    /* styles.css */
+      @import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+    body {
+        font-family:'Poppins', Arial, sans-serif;
+        background-image: url('pins.jpg'); /* Replace with your image URL */
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .container {
+        background: rgba(95, 95, 95, 0.5);
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        max-width: 400px;
+        width: 80%;
+        margin: 20px;
+        margin-top: 5rem;
+        box-shadow: 5px 5px 20px 5px rgba(2, 2, 30, 0.78);
+       
+        
+    }
+
+    h1 {
+        margin-bottom: 50px;
+        text-align: center;
+        color: #A300F7;
+        filter: drop-shadow(1px 1px 15px  #872FEB);
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    input {
+        padding: 15px;
+        margin-bottom: 10px;
+        border: 1px solid #B0B0B0;
+        border-radius: 50px;
+        outline: 1px solid #872FEB;
+    }
+    input:hover {
+       outline: 2px solid #872FEB;
+       filter: drop-shadow(1px 1px 15px  #872FEB);
+    }
+
+    button {
+        padding: 14px;
+        background-color: deepskyblue;
+        color: floralwhite;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        font-size: 18px;
+    }
+
+    button:hover {
+        background-color: #4cae4c;
+    }
+
+    .back-link {
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .back-link a {
+        color: #5bc0de;
+        text-decoration: none;
+        font-size: 13px;
+    }
+
+    .back-link a:hover {
+        color: red;
+    }
+
+    .checkbox {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 10px;
+        font-size: 15px;
+    }
+
+    label {
+        font-weight: bold;
+        color: deepskyblue;
+        margin-bottom: 5px;
+    }
+
+    /* Spinner Styles */
+    .spinner {
+        border: 4px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 4px solid #3498db;
+        width: 40px;
+        height: 40px;
+        animation: spin 2s linear infinite;
+        display: none;
+        margin: 0 auto;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+     .class.ai, p {
+     font-size: 10px;
+     font-weight: bolder;
+     font-family: 'Poppins';
+     background-size: 300% 300%;
+   /*/animation: gradient 12s cubic-bezier(0.4, 0, 0.2, 1) infinite;/*/
+     background-image: linear-gradient(
+     45deg, #FF0000, #FF7300, #FFFB00, #48FF00, #00FFD5, #002BFF, #FF00CB, #FF0000
+   );
+   animation: glowing 20s linear infinite;
+   background-clip: text;
+   -webkit-background-clip: text;
+   color: transparent;
+  }
+  
+  @keyframes glowing {
+   0% {
+    background-position: 0% 0%;
+   }
+   50% {
+    background-position: 400% 0%;
+   }
+   100% {
+    background-position: 0% 0%;
+   }
+  }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Register</h1>
+        <form id="registerForm">
+            <input type="text" id="username" placeholder="Username" required />
+            <input type="email" id="email" placeholder="Email" required />
+            <input type="password" id="password" placeholder="Password" required />
+            <br>
+            <div class="checkbox">
+                <input type="checkbox" onclick="togglePassword()" />
+                <label>Show Password</label>
+            </div>
+            <br>
+            <button type="submit">Register</button>
+        </form>
+        <div class="spinner" id="spinner"></div>
+        <div class="back-link">
+            <p><a href="login.html">Back to Login</a></p>
+        </div>
+    </div>
+    <script>
+    function togglePassword() {
+        var passwordField = document.getElementById("password");
+        passwordField.type = (passwordField.type === "password") ? "text" : "password";
+    }
+
+    document.getElementById('registerForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const username = document.getElementById('username').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const spinner = document.getElementById('spinner');
+
+        spinner.style.display = 'block';  // Show spinner
+
+        // Fetch the IP address
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                const ipAddress = data.ip;
+                registerUser(username, email, password, ipAddress);
+            })
+            .catch(error => {
+                console.error('Error fetching IP address:', error);
+                spinner.style.display = 'none';  // Hide spinner
+            });
+    });
+
+    function registerUser(username, email, password, ipAddress) {
+        let users = JSON.parse(localStorage.getItem('users')) || [];
+
+        // Check if the username already exists
+        if (users.find(user => user.username === username)) {
+            alert('Username already exists');
+            document.getElementById('spinner').style.display = 'none';  // Hide spinner
+            return;
+        }
+
+        // Set the specific admin username and password
+        const adminUsername = 'admin';
+        const adminPassword = 'adminryel';
+
+        // Check if trying to create the admin user
+        if (username === adminUsername) {
+            if (password !== adminPassword) {
+                alert('Incorrect admin password');
+                document.getElementById('spinner').style.display = 'none';  // Hide spinner
+                return;
+            }
+            users.push({ username, email, password, ipAddress, isAdmin: true });
+        } else {
+            users.push({ username, email, password, ipAddress, isAdmin: false });
+        }
+
+        localStorage.setItem('users', JSON.stringify(users));
+        alert('User registered successfully!');
+        document.getElementById('spinner').style.display = 'none';  // Hide spinner
+        window.location.href = 'login.html';
+    }
+    </script>
+    <footer>
+      <p>©developed by half human and half alien</p>
+    </footer>
+</body>
+</html>
