@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <style>
+        /* Add your styling here */
+        @import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            
+            background-image: url('/login/aa.jpg'); /* Replace with your image URL */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .menu-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #7800FF;
+            z-index: 1000;
+        }
+
+        .side-nav {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100%;
+            background: #333;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: top;
+            transition: left 0.3s;
+        }
+
+        .side-nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            margin: 15px 0;
+        }
+
+        .side-nav a:hover {
+            color: #FF0000;
+        }
+
+        .container {
+            
+            background: rgba(190, 190, 190, 0.8); 
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 900px;
+            width: 90%;
+            margin: 10px;
+            margin-top: 80px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+
+        h1 span {
+            color: #611FE8
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid black;
+            text-align: left;
+        }
+
+        th {
+            background: #888891;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .back-link a {
+            color: #7800FF;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-link a:hover {
+            color: deepskyblue;
+        }
+
+        .delete-btn {
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background-color: #c9302c;
+            border: 1px solid #c9302c;
+        }
+
+        .online-users, .messages {
+            margin-top: 20px;
+        }
+
+        .online-users h2, .messages h2 {
+            color: #333;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .online-users ul, .messages ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .online-users li, .messages li {
+            padding: 5px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .online-users li.online {
+            background-color: #eaf4e7;
+            color: #2b7a2f;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                margin: 5px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            .delete-btn {
+                padding: 4px 8px;
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+                margin: 0;
+            }
+
+            h1 {
+                font-size: 1.2rem;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            .delete-btn {
+                padding: 3px 6px;
+                font-size: 10px;
+            }
+        }
+
+        .side-nav.open {
+            left: 0;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="menu-btn">&#9776;</div>
+    <nav class="side-nav">
+        <a href="login.html">Logout</a>
+        <a href="register.html">Register</a>
+    </nav>
+    <div class="container">
+        <h1>Admin <span>Panel</span></h1>
+        <table id="userTable">
+            <thead>
+                <tr>
+                    <th scope="col">Username</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">IP Address</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Contact Number</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- User rows will be populated here -->
+            </tbody>
+        </table>
+        <div class="online-users">
+            <h2>Online Users</h2>
+            <ul id="onlineUserList">
+                <!-- Online user list will be populated here -->
+            </ul>
+        </div>
+        <div class="messages">
+            <h2>User Messages</h2>
+            <ul id="messageList">
+                <!-- Messages will be populated here -->
+            </ul>
+        </div>
+        <div class="back-link">
+            <p><a href="login.html">Back to Login</a></p>
+        </div>
+    </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        try {
+            const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+            if (!loggedInUser || !loggedInUser.isAdmin) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const userTableBody = document.getElementById('userTable').getElementsByTagName('tbody')[0];
+            const onlineUserList = document.getElementById('onlineUserList');
+            const messageList = document.getElementById('messageList');
+
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            let messages = JSON.parse(localStorage.getItem('messages')) || [];
+
+            // Function to create a table row for a user
+            const createUserRow = (user) => {
+                const row = userTableBody.insertRow();
+                row.insertCell(0).textContent = user.username;
+                row.insertCell(1).textContent = user.email;
+                row.insertCell(2).textContent = user.ipAddress || '';
+                row.insertCell(3).textContent = user.address || '';
+                row.insertCell(4).textContent = user.contactNumber || '';
+
+                const actionsCell = row.insertCell(5);
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.className = 'delete-btn';
+                deleteButton.onclick = () => {
+                    if (confirm(`Are you sure you want to delete ${user.username}?`)) {
+                        users = users.filter(u => u.username !== user.username);
+                        localStorage.setItem('users', JSON.stringify(users));
+                        row.remove();
+                    }
+                };
+                actionsCell.appendChild(deleteButton);
+            };
+
+            // Populate user table
+            users.forEach(user => {
+                if (user.username !== 'admin') {
+                    createUserRow(user);
+                }
+            });
+
+            // Display online users
+            const onlineUsers = users.filter(user => user.isOnline);
+            console.log("Online users:", onlineUsers);  // Log online users to verify
+            onlineUsers.forEach(user => {
+                const li = document.createElement('li');
+                li.className = 'online';
+                li.textContent = user.username;
+                onlineUserList.appendChild(li);
+            });
+
+            // Display messages
+            messages.forEach(msg => {
+                const li = document.createElement('li');
+                li.textContent = `${msg.username} (${new Date(msg.timestamp).toLocaleString()}): ${msg.message}`;
+                messageList.appendChild(li);
+            });
+
+        } catch (error) {
+            console.error('Error loading admin data:', error);
+            alert('Failed to load admin data. Please try again later.');
+        }
+    });
+
+    document.querySelector('.menu-btn').addEventListener('click', () => {
+        document.querySelector('.side-nav').classList.toggle('open');
+    });
+</script>
+</body>
+</html>
